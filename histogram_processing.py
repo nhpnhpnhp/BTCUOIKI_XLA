@@ -205,14 +205,8 @@ def thu_hep_muc_xam(gray_img, muc_xam_min_moi=30, muc_xam_max_moi=120):
     
     # Áp dụng công thức ánh xạ tuyến tính
     # pixel_moi = (pixel_cu - min_cu) * (max_moi - min_moi) / (max_cu - min_cu) + min_moi
-    ket_qua = (gray_img.astype(np.float64) - gia_tri_min_cu) * \
-              (muc_xam_max_moi - muc_xam_min_moi) / \
-              (gia_tri_max_cu - gia_tri_min_cu) + muc_xam_min_moi
-    
-    # Đảm bảo giá trị nằm trong khoảng [min_moi, max_moi] và chuyển về uint8
-    ket_qua = np.clip(ket_qua, muc_xam_min_moi, muc_xam_max_moi).astype(np.uint8)
-    
-    return ket_qua
+    ket_qua = (muc_xam_max_moi - muc_xam_min_moi) / (gia_tri_max_cu - gia_tri_min_cu) * (gray_img.astype(np.float64) - gia_tri_min_cu) + muc_xam_min_moi
+    return ket_qua.astype(np.uint8)
 
 
 # =============================================================================
@@ -273,15 +267,3 @@ def xu_ly_histogram(img, ten_anh, thu_muc_output):
     ve_histogram(anh_thu_hep, f"Histogram sau thu hep [30,120] ({ten_anh})", duong_dan_h3)
     print(f"  [Histogram] Da luu histogram thu hep: {duong_dan_h3}")
     
-    # Trả về kết quả để dùng cho báo cáo PDF
-    return {
-        'anh_xam': anh_xam,
-        'anh_can_bang': anh_can_bang,
-        'anh_thu_hep': anh_thu_hep,
-        'duong_dan_anh_xam': duong_dan_anh_xam,
-        'duong_dan_h1': duong_dan_h1,
-        'duong_dan_can_bang': duong_dan_can_bang,
-        'duong_dan_h2': duong_dan_h2,
-        'duong_dan_thu_hep': duong_dan_thu_hep,
-        'duong_dan_h3': duong_dan_h3,
-    }

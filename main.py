@@ -5,7 +5,6 @@ Mô tả: Chương trình chính - Xử lý ảnh cuối kỳ
     - Đọc tất cả ảnh từ thư mục input_images/
     - Thực hiện 3 nhiệm vụ: Histogram, Tích chập, LBP
     - Lưu kết quả vào thư mục output/
-    - Tạo báo cáo PDF tự động
 
 Cách chạy:
     python main.py
@@ -28,8 +27,6 @@ import numpy as np
 from histogram_processing import xu_ly_histogram
 from convolution_processing import xu_ly_tich_chap
 from lbp_processing import xu_ly_lbp
-from report_generator import tao_bao_cao_pdf
-
 
 # =============================================================================
 # CẤU HÌNH ĐƯỜNG DẪN
@@ -46,36 +43,8 @@ THU_MUC_HISTOGRAM = os.path.join(THU_MUC_OUTPUT, "histograms")
 THU_MUC_CONVOLUTION = os.path.join(THU_MUC_OUTPUT, "convolution")
 THU_MUC_LBP = os.path.join(THU_MUC_OUTPUT, "lbp")
 
-# Đường dẫn file báo cáo PDF
-DUONG_DAN_PDF = os.path.join(THU_MUC_OUTPUT, "report.pdf")
-
 # Các định dạng ảnh được hỗ trợ
 DINH_DANG_ANH = ('.jpg', '.jpeg', '.png', '.bmp', '.tiff', '.tif', '.webp')
-
-
-# =============================================================================
-# HÀM KIỂM TRA VÀ TẠO THƯ MỤC
-# =============================================================================
-def kiem_tra_va_tao_thu_muc():
-    """
-    Kiểm tra thư mục input tồn tại và tạo thư mục output nếu chưa có.
-    
-    Trả về:
-        True nếu mọi thứ OK, False nếu có lỗi.
-    """
-    # Kiểm tra thư mục input
-    if not os.path.exists(THU_MUC_INPUT):
-        print(f"LOI: Khong tim thay thu muc input: {THU_MUC_INPUT}")
-        print(f"Hay tao thu muc 'input_images/' va dat 10 anh vao do.")
-        return False
-    
-    # Tạo các thư mục output
-    for thu_muc in [THU_MUC_OUTPUT, THU_MUC_HISTOGRAM, THU_MUC_CONVOLUTION, THU_MUC_LBP]:
-        os.makedirs(thu_muc, exist_ok=True)
-    
-    print(f"Thu muc input: {THU_MUC_INPUT}")
-    print(f"Thu muc output: {THU_MUC_OUTPUT}")
-    return True
 
 
 # =============================================================================
@@ -94,15 +63,6 @@ def doc_danh_sach_anh():
         # Kiểm tra định dạng file
         if ten_file.lower().endswith(DINH_DANG_ANH):
             danh_sach.append(ten_file)
-    
-    if len(danh_sach) == 0:
-        print(f"LOI: Khong tim thay anh nao trong {THU_MUC_INPUT}")
-        print(f"Dinh dang ho tro: {', '.join(DINH_DANG_ANH)}")
-    else:
-        print(f"\nTim thay {len(danh_sach)} anh:")
-        for i, ten in enumerate(danh_sach, 1):
-            print(f"  {i}. {ten}")
-    
     return danh_sach
 
 
@@ -119,28 +79,19 @@ def doc_anh(duong_dan):
     Trả về:
         img: ảnh (numpy array), hoặc None nếu lỗi.
     """
-    try:
-        img = cv2.imread(duong_dan)
-        if img is None:
-            print(f"  LOI: Khong doc duoc anh: {duong_dan}")
-            print(f"  Kiem tra lai dinh dang hoac duong dan file.")
-            return None
-        return img
-    except Exception as e:
-        print(f"  LOI khi doc anh {duong_dan}: {str(e)}")
-        return None
+    img = cv2.imread(duong_dan)
+    return img
 
 
 # =============================================================================
 # HÀM XỬ LÝ MỘT ẢNH (TẤT CẢ 3 NHIỆM VỤ)
 # =============================================================================
-def xu_ly_mot_anh(ten_file, so_thu_tu, tong_so):
+def xu_ly_mot_anh(ten_file):
     """
     Xử lý một ảnh: thực hiện cả 3 nhiệm vụ (Histogram, Tích chập, LBP).
     
     Tham số:
         ten_file: tên file ảnh (string).
-        so_thu_tu: số thứ tự ảnh hiện tại (int).
         tong_so: tổng số ảnh cần xử lý (int).
     
     Trả về:
@@ -151,14 +102,11 @@ def xu_ly_mot_anh(ten_file, so_thu_tu, tong_so):
     duong_dan_anh = os.path.join(THU_MUC_INPUT, ten_file)
     
     print(f"\n{'='*60}")
-    print(f"ANH {so_thu_tu}/{tong_so}: {ten_file}")
+    print(f"ANH {ten_file}")
     print(f"{'='*60}")
     
     # Đọc ảnh
     img = doc_anh(duong_dan_anh)
-    if img is None:
-        return None
-    
     print(f"  Kich thuoc anh: {img.shape}")
     
     ket_qua = {
@@ -172,32 +120,24 @@ def xu_ly_mot_anh(ten_file, so_thu_tu, tong_so):
     # ---- NHIỆM VỤ 1: HISTOGRAM ----
     print(f"\n--- NHIEM VU 1: HISTOGRAM ---")
     thoi_gian_bat_dau = time.time()
-    try:
-        ket_qua['histogram'] = xu_ly_histogram(img, ten_anh, THU_MUC_HISTOGRAM)
-        thoi_gian = time.time() - thoi_gian_bat_dau
-        print(f"  >> Hoan thanh histogram trong {thoi_gian:.2f} giay.")
-    except Exception as e:
-        print(f"  LOI xu ly histogram: {str(e)}")
+    ket_qua['histogram'] = xu_ly_histogram(img, ten_anh, THU_MUC_HISTOGRAM)
+    thoi_gian = time.time() - thoi_gian_bat_dau
+    print(f"  >> Hoan thanh histogram trong {thoi_gian:.2f} giay.")
     
     # ---- NHIỆM VỤ 2: TÍCH CHẬP ----
     print(f"\n--- NHIEM VU 2: TICH CHAP & LOC TRUNG VI ---")
     thoi_gian_bat_dau = time.time()
-    try:
-        ket_qua['convolution'] = xu_ly_tich_chap(img, ten_anh, THU_MUC_CONVOLUTION)
-        thoi_gian = time.time() - thoi_gian_bat_dau
-        print(f"  >> Hoan thanh tich chap trong {thoi_gian:.2f} giay.")
-    except Exception as e:
-        print(f"  LOI xu ly tich chap: {str(e)}")
+    ket_qua['convolution'] = xu_ly_tich_chap(img, ten_anh, THU_MUC_CONVOLUTION)
+    thoi_gian = time.time() - thoi_gian_bat_dau
+    print(f"  >> Hoan thanh tich chap trong {thoi_gian:.2f} giay.")
+
     
     # ---- NHIỆM VỤ 3: LBP ----
     print(f"\n--- NHIEM VU 3: LOCAL BINARY PATTERNS ---")
     thoi_gian_bat_dau = time.time()
-    try:
-        ket_qua['lbp'] = xu_ly_lbp(img, ten_anh, THU_MUC_LBP)
-        thoi_gian = time.time() - thoi_gian_bat_dau
-        print(f"  >> Hoan thanh LBP trong {thoi_gian:.2f} giay.")
-    except Exception as e:
-        print(f"  LOI xu ly LBP: {str(e)}")
+    ket_qua['lbp'] = xu_ly_lbp(img, ten_anh, THU_MUC_LBP)
+    thoi_gian = time.time() - thoi_gian_bat_dau
+    print(f"  >> Hoan thanh LBP trong {thoi_gian:.2f} giay.")
     
     return ket_qua
 
@@ -210,39 +150,21 @@ def main():
     Hàm chính: điều phối toàn bộ quy trình xử lý ảnh.
     
     Luồng xử lý:
-        1. Kiểm tra thư mục input/output.
-        2. Đọc danh sách ảnh.
-        3. Xử lý từng ảnh (3 nhiệm vụ).
-        4. Tạo báo cáo PDF.
+         Đọc danh sách ảnh.
+         Xử lý từng ảnh (3 nhiệm vụ).
     """
-    print("=" * 60)
-    print("  BAI TAP CUOI KY - XU LY ANH SO")
-    print("  NHOM 10")
-    print("=" * 60)
-    
-    # Bước 1: Kiểm tra thư mục
-    if not kiem_tra_va_tao_thu_muc():
-        sys.exit(1)
-    
-    # Bước 2: Đọc danh sách ảnh
     danh_sach_anh = doc_danh_sach_anh()
-    if len(danh_sach_anh) == 0:
-        sys.exit(1)
+
     
-    # Bước 3: Xử lý từng ảnh
+    #Xử lý từng ảnh
     thoi_gian_tong = time.time()
     ket_qua_tat_ca = []
     
-    for i, ten_file in enumerate(danh_sach_anh, 1):
-        ket_qua = xu_ly_mot_anh(ten_file, i, len(danh_sach_anh))
+    for ten_file in danh_sach_anh:
+        ket_qua = xu_ly_mot_anh(ten_file)
         if ket_qua is not None:
             ket_qua_tat_ca.append(ket_qua)
     
-    # Bước 4: Tạo báo cáo PDF
-    if len(ket_qua_tat_ca) > 0:
-        tao_bao_cao_pdf(DUONG_DAN_PDF, ket_qua_tat_ca)
-    else:
-        print("\nKhong co ket qua de tao bao cao.")
     
     # Tổng kết
     thoi_gian_tong = time.time() - thoi_gian_tong
@@ -251,7 +173,6 @@ def main():
     print(f"  So anh da xu ly: {len(ket_qua_tat_ca)}/{len(danh_sach_anh)}")
     print(f"  Tong thoi gian: {thoi_gian_tong:.2f} giay")
     print(f"  Ket qua luu tai: {THU_MUC_OUTPUT}")
-    print(f"  Bao cao PDF: {DUONG_DAN_PDF}")
     print(f"{'='*60}")
 
 

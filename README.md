@@ -230,20 +230,6 @@ lbp = int(chuoi, 2)  # "10110010" → 178
 
 **P = 24**: Tách 24 bit → 3 × 8 bit → max(phần_1, phần_2, phần_3)
 
-### 9. Xuất báo cáo PDF
-
-```python
-from matplotlib.backends.backend_pdf import PdfPages
-
-with PdfPages('report.pdf') as pdf:
-    fig = plt.figure()
-    # Vẽ nội dung...
-    pdf.savefig(fig)  # Lưu 1 trang
-```
-
-- Dùng matplotlib tạo từng trang, savefig vào PdfPages.
-- Hỗ trợ ảnh, biểu đồ, và text.
-
 ---
 
 ## Câu Hỏi Vấn Đáp Thường Gặp
