@@ -30,7 +30,7 @@ KERNEL_3X3_GAUSSIAN = np.array([
     [1, 2, 1],
     [2, 4, 2],
     [1, 2, 1]
-], dtype=np.float64) / 16.0
+], dtype=np.float64)
 
 KERNEL_5X5_GAUSSIAN = np.array([
     [1,  4,  6,  4, 1],
@@ -38,7 +38,7 @@ KERNEL_5X5_GAUSSIAN = np.array([
     [6, 24, 36, 24, 6],
     [4, 16, 24, 16, 4],
     [1,  4,  6,  4, 1]
-], dtype=np.float64) / 256.0
+], dtype=np.float64)
 
 KERNEL_7X7_GAUSSIAN = np.array([
     [0, 0, 1, 2, 1, 0, 0],
@@ -49,9 +49,6 @@ KERNEL_7X7_GAUSSIAN = np.array([
     [0, 3, 13, 22, 13, 3, 0],
     [0, 0, 1, 2, 1, 0, 0]
 ], dtype=np.float64)
-
-KERNEL_7X7_GAUSSIAN = KERNEL_7X7_GAUSSIAN / KERNEL_7X7_GAUSSIAN.sum()
-
 
 # =============================================================================
 # HÀM 1: TÍCH CHẬP (CONVOLUTION) VỚI PADDING VÀ STRIDE
