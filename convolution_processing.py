@@ -11,7 +11,7 @@ from histogram_processing import chuyen_anh_xam
 # không quy định giá trị cụ thể bên trong kernel.
 # Nhóm chọn Gaussian kernel vì đây là kernel lọc làm mịn ảnh phổ biến.
 # Gaussian cho trọng số ở tâm lớn hơn, các điểm xa tâm có trọng số nhỏ hơn.
-
+#??? tại sao chọn kernel như này
 KERNEL_3X3_GAUSSIAN = np.array([
     [1, 2, 1],
     [2, 4, 2],
